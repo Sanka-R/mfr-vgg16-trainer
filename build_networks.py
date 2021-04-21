@@ -28,10 +28,10 @@ def build_siamese_network_vgg16(fine_tune_percentage):
     diff = tf.keras.layers.Lambda(square_change)([feature_a, feature_b])
 
     # concat = tf.keras.layers.concatenate([feature_a, feature_b])
-    fc1 = tf.keras.layers.Dense(512, activation="relu")(diff)
+    # fc1 = tf.keras.layers.Dense(512, activation="relu")(diff)
     # fc2 = tf.keras.layers.Dense(64, activation="relu")(fc1)
 
-    outputs = tf.keras.layers.Dense(1, activation="sigmoid")(fc1)
+    outputs = tf.keras.layers.Dense(1, activation="sigmoid")(diff)
     model = tf.keras.Model(inputs=[input_a, input_b], outputs=outputs)
 
     optimizer = tf.keras.optimizers.SGD(lr=0.001)
@@ -58,8 +58,8 @@ def build_vgg16_sister_network(shape, fineTune=False, fine_tune_percentage=.30):
         for layer in base_model.layers[fine_tune_at:]:
             layer.trainable = True
     last_layer = base_model.get_layer('avg_pool').output
-    out = Flatten(name='flatten')(last_layer)
-    # out = Dense(512, activation='relu', name='fc7')(x)
+    x = Flatten(name='flatten')(last_layer)
+    out = Dense(512, activation='relu', name='fc7')(x)
     model = Model(base_model.input, out)
     model.summary()
     return model
