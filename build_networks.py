@@ -34,8 +34,8 @@ def build_siamese_network_vgg16(fine_tune_percentage):
     outputs = tf.keras.layers.Dense(1, activation="sigmoid")(fc2)
     model = tf.keras.Model(inputs=[input_a, input_b], outputs=outputs)
 
-    # optimizer = tf.keras.optimizers.SGD(lr=0.001)
-    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+    optimizer = tf.keras.optimizers.SGD(lr=0.001)
+    model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=["accuracy"])
     # model.compile(loss=contrastive_loss, optimizer="adam", metrics=["accuracy"])
     model.summary()
 
@@ -51,7 +51,7 @@ def build_vgg16_sister_network(shape, fineTune=False, fine_tune_percentage=.30):
     else:
         base_model.trainable = True
         # Fine-tune from this layer onwards
-        fine_tune_at = 275
+        fine_tune_at = 272
         # Freeze all the layers before the `fine_tune_at` layer
         for layer in base_model.layers[:fine_tune_at]:
             layer.trainable = False
