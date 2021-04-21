@@ -34,8 +34,9 @@ def build_siamese_network_vgg16(fine_tune_percentage):
     outputs = tf.keras.layers.Dense(1, activation="sigmoid")(fc2)
     model = tf.keras.Model(inputs=[input_a, input_b], outputs=outputs)
 
-    # optimizer = tf.keras.optimizers.SGD(lr=0.001)
-    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
+    optimizer = tf.keras.optimizers.SGD(lr=0.001)
+    # optimizer = tf.keras.optimizers.RMSprop(lr=0.001)
+    model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=["accuracy"])
     # model.compile(loss=contrastive_loss, optimizer="adam", metrics=["accuracy"])
     model.summary()
 
@@ -44,7 +45,7 @@ def build_siamese_network_vgg16(fine_tune_percentage):
 
 def build_vgg16_sister_network(shape, fineTune=False, fine_tune_percentage=.30):
     # base_model = tf.keras.applications.VGG16(input_shape=shape, include_top=False, weights="imagenet", pooling="avg")
-    base_model = VGGFace(include_top=False, input_shape=shape)
+    base_model = VGGFace(include_top=False, input_shape=shape, pooling="avg")
     base_model.summary()
     if fineTune == False:
         base_model.trainable = False
@@ -57,9 +58,9 @@ def build_vgg16_sister_network(shape, fineTune=False, fine_tune_percentage=.30):
             layer.trainable = False
         for layer in base_model.layers[fine_tune_at:]:
             layer.trainable = True
-    last_layer = base_model.get_layer('pool5').output
-    out = Flatten(name='flatten')(last_layer)
+    # last_layer = base_model.get_layer('pool5').output
+    # x = Flatten(name='flatten')(last_layer)
     # out = Dense(512, activation='relu', name='fc7')(x)
-    model = Model(base_model.input, out)
+    model = Model(base_model.input, base_model.output)
     model.summary()
     return model
