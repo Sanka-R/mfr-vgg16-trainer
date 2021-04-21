@@ -72,7 +72,7 @@ class DataGenerator(tf.keras.utils.Sequence):
             image = self.get_scaled_image(image)
             # image = self.__preprocess_image(image)
             image = img_to_array(image)
-            image = preprocess_input(image, version=2)
+            image = preprocess_input(image, version=1)
             reference_images.append(image)
 
         for probe in probes:
@@ -80,7 +80,7 @@ class DataGenerator(tf.keras.utils.Sequence):
             image = self.get_scaled_image(image)
             # image = self.__preprocess_image(image)
             image = img_to_array(image)
-            image = preprocess_input(image, version=2)
+            image = preprocess_input(image, version=1)
             probe_images.append(image)
         reference_images = np.array(reference_images)
         probe_images = np.array(probe_images)
