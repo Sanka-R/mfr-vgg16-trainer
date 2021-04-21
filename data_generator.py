@@ -70,7 +70,6 @@ class DataGenerator(tf.keras.utils.Sequence):
         for idx, reference in enumerate(references):
             image = cv2.cvtColor(cv2.imread(reference), cv2.COLOR_BGR2RGB)
             image = self.get_scaled_image(image)
-            image = self.__image_margin(image)
             # image = self.__preprocess_image(image)
             image = img_to_array(image)
             image = preprocess_input(image, version=2)
@@ -79,7 +78,6 @@ class DataGenerator(tf.keras.utils.Sequence):
         for probe in probes:
             image = cv2.cvtColor(cv2.imread(probe), cv2.COLOR_BGR2RGB)
             image = self.get_scaled_image(image)
-            image = self.__image_margin(image)
             # image = self.__preprocess_image(image)
             image = img_to_array(image)
             image = preprocess_input(image, version=2)
