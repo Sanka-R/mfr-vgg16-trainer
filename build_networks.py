@@ -6,6 +6,18 @@ from tensorflow.python.keras.layers import *
 
 from recognition.config import IMG_SHAPE
 
+def contrastive_loss(y, preds, margin=1):
+    # explicitly cast the true class label data type to the predicted
+    # class label data type
+    # tf.print(preds)
+    y = tf.cast(y, preds.dtype)
+    # calculate the contrastive loss between the true labels and
+    # the predicted labels
+    squaredPreds = K.square(preds)
+    squaredMargin = K.square(K.maximum(margin - preds, 0))
+
+    loss = 1 - K.mean(y * squaredPreds + (1 - y) * squaredMargin)
+    return loss
 
 def square_change(vectors):
     # unpack the vectors into separate lists
@@ -28,16 +40,16 @@ def build_siamese_network_vgg16(fine_tune_percentage):
     diff = tf.keras.layers.Lambda(square_change)([feature_a, feature_b])
 
     # concat = tf.keras.layers.concatenate([feature_a, feature_b])
-    fc1 = tf.keras.layers.Dense(256, activation="relu")(diff)
-    fc2 = tf.keras.layers.Dense(64, activation="relu")(fc1)
+    # fc1 = tf.keras.layers.Dense(256, activation="relu")(diff)
+    # fc2 = tf.keras.layers.Dense(64, activation="relu")(fc1)
 
-    outputs = tf.keras.layers.Dense(1, activation="sigmoid")(fc2)
+    outputs = tf.keras.layers.Dense(1, activation="sigmoid")(diff)
     model = tf.keras.Model(inputs=[input_a, input_b], outputs=outputs)
 
     optimizer = tf.keras.optimizers.SGD(lr=0.001)
     # optimizer = tf.keras.optimizers.RMSprop(lr=0.001)
-    model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=["accuracy"])
-    # model.compile(loss=contrastive_loss, optimizer="adam", metrics=["accuracy"])
+    # model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=["accuracy"])
+    model.compile(loss=contrastive_loss, optimizer=optimizer, metrics=["accuracy"])
     model.summary()
 
     return model
@@ -60,7 +72,7 @@ def build_vgg16_sister_network(shape, fineTune=False, fine_tune_percentage=.30):
             layer.trainable = True
     # last_layer = base_model.get_layer('pool5').output
     # x = Flatten(name='flatten')(last_layer)
-    # out = Dense(512, activation='relu', name='fc7')(x)
-    model = Model(base_model.input, base_model.output)
+    out = Dense(512, activation='relu', name='fc7')(base_model.output)
+    model = Model(base_model.input, out)
     model.summary()
     return model

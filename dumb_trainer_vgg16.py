@@ -56,7 +56,7 @@ model = build_siamese_network_vgg16(fine_tune_percentage=0.01)
 training_generator = DataGenerator(train_references, train_probes, train_true_labels, batch_sz)
 validation_generator = DataGenerator(val_references, val_probes, val_true_labels, batch_sz)
 
-model_architecture = "VGG16"
+model_architecture = "VGG16_contrastive"
 pretrained_weights = "VGGFACE2"
 percentage_freezed = "5"
 

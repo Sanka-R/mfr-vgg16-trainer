@@ -1,0 +1,2 @@
+model_checkpoint_path: "checkpoint_VGG16_VGGFACE2_5_2021_04_21_17_54_10"
+all_model_checkpoint_paths: "checkpoint_VGG16_VGGFACE2_5_2021_04_21_17_54_10"
